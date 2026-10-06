@@ -2,23 +2,32 @@ import React from 'react'
 import { useState } from 'react'
 import { foods } from '../data'
 import { useEffect } from 'react'
+import { MyModal } from './MyModal'
 
-export const MenuList = ({selectedCateg}) => {
+export const MenuList = ({ selectedCateg }) => {
     const [menu, setMenu] = useState(foods)
-    console.log(selectedCateg);
-    
-        useEffect(() => {
-          setMenu(()=>selectedCateg=='all'? foods : foods.filter(obj=>obj.category==selectedCateg))
-        
-        }, [selectedCateg])
-        
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedFood, setSelectedFood] = useState(null)
 
+    useEffect(() => {
+        setMenu(() => selectedCateg == 'all' ? foods : foods.filter(obj => obj.category == selectedCateg))
+
+    }, [selectedCateg])
+
+
+    const toggle = ({ title, img }) => {
+        setIsOpen(true)
+        console.log(title);
+        setSelectedFood({ title, img })
+
+    }
     return (
         <div className='flex flex-wrap gap-4 p-4'>
             {menu.map(({ id, title, category, price, img, desc }) =>
                 <div key={id} className="flex gap-4 basis-[calc(50%-20px)]  ">
                     <div className='flex-1'>
-                        <img className='w-full h-48 object-cover rounded-2xl ' src={'images/'+img} alt={title}/>
+                        <img onClick={() => toggle({ title, img })}
+                            className='w-full h-48 object-cover rounded-2xl ' src={'images/' + img} alt={title} />
                     </div>
                     <div className='flex-1'>
                         <div>
@@ -31,6 +40,7 @@ export const MenuList = ({selectedCateg}) => {
                     </div>
                 </div>
             )}
+            {isOpen && <MyModal isOpen={isOpen} setIsOpen={setIsOpen} selectedFood={selectedFood} />}
         </div>
     )
 }
